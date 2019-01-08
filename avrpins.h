@@ -29,7 +29,7 @@ e-mail   :  support@circuitsathome.com
 #else
 #define _avrpins_h_
 
-#if defined(__AVR__)
+#if defined(__AVR__) && !defined(__AVR_ATmega4809__)
 
 // pointers are 16 bits on AVR
 #define pgm_read_pointer(p) pgm_read_word(p)
@@ -1211,6 +1211,62 @@ MAKE_PIN(P19, GPIOC, GPIO_PIN_0); // A5
 #error "Please define board in avrpins.h"
 
 #endif
+
+#elif defined(__AVR_ATmega4809__)
+
+#include <avr/pgmspace.h>
+// Pointers are 32 bits on arc
+#define pgm_read_pointer(p) pgm_read_dword(p)
+
+#define MAKE_PIN(className, pin) \
+class className { \
+public: \
+  static void Set() { \
+    digitalWrite(pin, HIGH);\
+  } \
+  static void Clear() { \
+    digitalWrite(pin, LOW); \
+  } \
+  static void SetDirRead() { \
+    pinMode(pin, INPUT); \
+  } \
+  static void SetDirWrite() { \
+    pinMode(pin, OUTPUT); \
+  } \
+  static uint8_t IsSet() { \
+    return digitalRead(pin); \
+  } \
+};
+
+MAKE_PIN(P0, 0);
+MAKE_PIN(P1, 1);
+MAKE_PIN(P2, 2);
+MAKE_PIN(P3, 3); //PWM
+MAKE_PIN(P4, 4);
+MAKE_PIN(P5, 5); //PWM
+MAKE_PIN(P6, 6); //PWM
+MAKE_PIN(P7, 7);
+MAKE_PIN(P8, 8);
+MAKE_PIN(P9, 9); //PWM
+
+MAKE_PIN(P10, 10);
+MAKE_PIN(P11, 11);
+MAKE_PIN(P12, 12);
+MAKE_PIN(P13, 13);
+
+MAKE_PIN(P14, 14); // A0
+MAKE_PIN(P15, 15); // A1
+MAKE_PIN(P16, 16); // A2
+MAKE_PIN(P17, 17); // A3
+MAKE_PIN(P18, 18); // A4 SDA
+MAKE_PIN(P19, 19); // A5 SCL
+MAKE_PIN(P20, 20); // ATN
+
+MAKE_PIN(P32, 32); //SPI SCK
+MAKE_PIN(P33, 33); //SPI MOSI
+MAKE_PIN(P34, 34); //SPI MISO
+
+#undef MAKE_PIN
 
 #elif defined(__ARDUINO_ARC__)
 
